@@ -1,0 +1,48 @@
+---
+########################## Check ROBO3T #########################
+- name: check if robo3t is installed
+  win_stat:
+    path: "{{ ROBO3T_INSTALLATION_DIR }}"
+  register: robo3t_installation
+
+- debug:
+    msg: "Robo 3T is already present"
+  when: robo3t_installation.stat.exists
+
+- debug:
+    msg: "Robo 3T is not installed on the machine."
+  when: not robo3t_installation.stat.exists
+
+  tags:
+    - check
+    - install-all
+    - never
+
+########################## Install ROBO3T #########################
+- block:
+  - name: Create robo3t setup directory
+    win_file:
+      path: "{{ ROBO3T_SETUP_DIR }}"
+      state: directory
+      recurse: yes
+
+  - name: Download the Robo 3T
+    win_get_url:
+      url: '{{ ROBO3T_RUNTIME_URL }}'
+      dest: '{{ ROBO3T_SETUP_DIR }}//robo3t-1.4.1.exe'
+      url_username: '{{ ROBO3T_URL_AUTHENTICATION_USERNAME }}'
+      url_password: '{{ ROBO3T_URL_AUTHENTICATION_PASSWORD }}'
+      force_basic_auth: yes
+
+  - name: Install Robo 3T
+    win_shell: '{{ ROBO3T_SETUP_DIR }}\\robo3t-1.4.1.exe /S'
+    register: robo3t_install_output
+
+  - debug:
+      msg: "Robo3T has been installed successfully"
+    when: robo3t_install_output.stdout
+  when: not robo3t_installation.stat.exists
+  tags:
+    - install-robo3t
+    - install-all
+    - never

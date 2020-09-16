@@ -1,0 +1,6 @@
+---
+ROBO3T_RUNTIME_URL: https://download.studio3t.com/robomongo/windows/robo3t-1.4.1-windows-x86_64-122dbd9.exe
+ROBO3T_SETUP_DIR: "C:\\Users\\Administrator\\Downloads\\tools"
+ROBO3T_INSTALLATION_DIR: "C:\\Program Files\\Robo 3T 1.4.1"
+ROBO3T_URL_AUTHENTICATION_USERNAME: ""
+ROBO3T_URL_AUTHENTICATION_PASSWORD: ""

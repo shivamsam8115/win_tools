@@ -1,0 +1,61 @@
+---
+########################## Check access runtime 2013 #########################
+- name: check if access runtime is installed
+  win_shell: |
+    Get-WmiObject -Class win32_product -filter "name LIKE 'microsoft office%'"
+  register: access_runtime
+
+- debug:
+    msg: "Access runtime is already present"
+  when: access_runtime.stdout
+
+- debug:
+    msg: "Access runtime is not installed on the machine."
+  when: not access_runtime.stdout
+
+  tags:
+    - check-accessruntime
+    - install-all
+    - never
+
+########################## Install access runtime 2013 #########################
+- block:
+  - name: Download the AccessRuntime 2013
+    win_get_url:
+      url: '{{ ACCESS_RUNTIME_URL }}'
+      dest: '{{ ACCESS_RUNTIME_SETUP_DIR }}'
+      url_username: '{{ ACCESS_RUNTIME_URL_AUTHENTICATION_USERNAME }}'
+      url_password: '{{ ACCESS_RUNTIME_URL_AUTHENTICATION_PASSWORD }}'
+      force_basic_auth: yes
+
+  - name: Extract the artifact
+    win_shell: '{{ ACCESS_RUNTIME_SETUP_DIR }}\\AccessRuntime_x64_en-us.exe /extract:{{ ACCESS_RUNTIME_SETUP_DIR }}\\accessRT /quiet'
+    register: extract_output
+
+  - debug:
+      msg: "{{extract_output.stdout}}"
+
+  - name: create config.xml
+    template:
+      src: "{{item}}"
+      dest: "{{ ACCESS_RUNTIME_SETUP_DIR }}\\accessRT\\{{ item | basename | regex_replace('.j2', '') }}"
+    with_items:
+      - accessRT.xml.j2
+
+  - name: Install access runtime 2013
+    win_shell: '{{ ACCESS_RUNTIME_SETUP_DIR }}\\accessRT\\setup.exe /config {{ ACCESS_RUNTIME_SETUP_DIR }}\\accessRT\\accessRT.xml'
+    ignore_errors: true
+
+  - name: check if access runtime is installed successfully
+    win_shell: |
+      Get-WmiObject -Class win32_product -filter "name LIKE 'microsoft office%'"
+    register: accessRT_output
+
+  - debug:
+      msg: "Access runtime has been installed successfully"
+    when: accessRT_output.stdout
+  when: not access_runtime.stdout
+  tags:
+    - install-accessruntime
+    - install-all
+    - never

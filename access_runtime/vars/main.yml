@@ -1,0 +1,7 @@
+---
+# vars file for access_runtime
+ACCESS_RUNTIME_URL: https://download.microsoft.com/download/5/E/A/5EA6017B-E7FE-40CA-8C3E-57387259F3BF/AccessRuntime_x64_en-us.exe
+ACCESS_RUNTIME_URL_AUTHENTICATION_USERNAME: ""
+ACCESS_RUNTIME_URL_AUTHENTICATION_PASSWORD: ""
+ACCESS_RUNTIME_SETUP_DIR: "C:\\Users\\Administrator\\Downloads\\tools"
+ACCESS_RUNTIME_INSTALLATION_DIR: "C:\\Program Files\\Microsoft Office"
